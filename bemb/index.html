@@ -678,7 +678,7 @@ If there is no category information, the model considers all items to be in the 
 <p>The BEMB admits a <strong>linear additive form</strong> of utility formula.</p>
 <p>For example, the model parses utility formula string <code>lambda_item + theta_user * alpha_item + zeta_user * item_obs</code> into the following representation:</p>
 <div class="arithmatex">\[
-\mathcal{U}(u, i, s)= \lambda_i + \theta_u^\top \alpha_i + \zeta_u^\top X^{item}_i \varepsilon \in \mathbb{R}
+\mathcal{U}(u, i, s)= \lambda_i + \theta_u^\top \alpha_i + \zeta_u^\top X^{item}_i + \varepsilon \in \mathbb{R}
 \]</div>
 <p>The <code>utility_formula</code> consists of two classes of objects:
 1. <strong>learnable coefficients</strong> (i.e., Greek letters): the string-parser identifies learnable coefficients by looking at their suffix. These variables can be (1) constant across all items and users, (2) user-specific, or (3) item-specific. For example, the <span class="arithmatex">\(\lambda_i\)</span> term above is item-specific intercept and it is presented as <code>item_item</code> in the <code>utility_formula</code>. To ensure the string-parsing is working properly, learnable coefficients <strong>must</strong> ends with one of <code>{_item, _user, _constant}</code>.
