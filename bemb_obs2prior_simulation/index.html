@@ -506,6 +506,7 @@
 <p>Author: Tianyu Du</p>
 <p>Update: May. 6, 2022</p>
 <p>This tutorial offers a simple simulation exercise to demonstrate how to use BEMB model and the power of BEMB's <code>obs2prior</code> feature. We highly recommend you to read the BEMB tutorial first.</p>
+<p>The executable Jupyter notebook for this tutorial can be found <a href="https://github.com/gsbDBI/deepchoice/blob/main/tutorials/simulation/simulation.ipynb">here</a></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">import</span> <span class="nn">torch</span>
@@ -528,7 +529,7 @@ Each user-item choice pair is called a <strong>purchasing record</strong> in our
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">user_index</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">num_users</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">data_size</span><span class="p">))</span>
 </code></pre></div>
 <p>We further assign each individual some preferences so that our simulated is <strong>not</strong> totally random.</p>
-<p>In particular, for each user <span class="arithmatex">\(u \in \{1, 2, \dots, num\_users\}\)</span>, we assume <span class="arithmatex">\(u\)</span> particularly loves the item <span class="arithmatex">\(i^*(u) \in \{0, 1, \dots, num\_item - 1\}\)</span>:</p>
+<p>In particular, for each user <span class="arithmatex">\(u \in \{0, 1, \dots, num\_users - 1\}\)</span>, we assume <span class="arithmatex">\(u\)</span> particularly loves the item <span class="arithmatex">\(i^*(u) \in \{0, 1, \dots, num\_item - 1\}\)</span>:</p>
 <div class="arithmatex">\[
 i^{love}(u) = \left \lfloor \frac{\sin \left( \frac{u}{num\_users} \times 4 \times \pi \right) + 1}{2} \times num\_items \right \rfloor
 \]</div>

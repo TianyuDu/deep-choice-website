@@ -669,11 +669,11 @@ For simplicity, we assume that item/user/session/price observables are named as 
 <p><strong>Note</strong>: for the string parsing to work correctly, please <strong>do</strong> add spaces around <code>+</code> and <code>*</code>.
 This section covers how to convert the utility representation in a choice problem into the <code>utility_formula</code> argument of the <code>BEMBFlex</code> model and <code>LitBEMBFlex</code> wrapper.</p>
 <p>The core of specifying a BEMB model is to <strong>specify the utility function</strong> <span class="arithmatex">\(\mathcal{U}(u,i,s)\)</span> for user <span class="arithmatex">\(u\)</span> to purchase item <span class="arithmatex">\(i\)</span> in session <span class="arithmatex">\(s\)</span>, the <code>bemb</code> package provides an easy-to-use string-parsing mechanism for researchers to provide their ideal utility representations.
-With the utility representation, the probability for consumer <span class="arithmatex">\(u\)</span> to purchase item <span class="arithmatex">\(i\)</span> in session <span class="arithmatex">\(s\)</span> is the following
-$$
+With the utility representation, the probability for consumer <span class="arithmatex">\(u\)</span> to purchase item <span class="arithmatex">\(i\)</span> in session <span class="arithmatex">\(s\)</span> is the following</p>
+<div class="arithmatex">\[
 P(i|u,s) = \frac{e^{\mathcal{U}(u, i, s)}}{\sum_{i' \in I_c} e^{\mathcal{U}(u, i', s)}}
-$$
-where <span class="arithmatex">\(I_c\)</span> is the set of items in the same category of item <span class="arithmatex">\(i\)</span>.
+\]</div>
+<p>where <span class="arithmatex">\(I_c\)</span> is the set of items in the same category of item <span class="arithmatex">\(i\)</span>.
 If there is no category information, the model considers all items to be in the same category, i.e., <span class="arithmatex">\(I_c = \{1, 2, \dots I\}\)</span>.</p>
 <p>The BEMB admits a <strong>linear additive form</strong> of utility formula.</p>
 <p>For example, the model parses utility formula string <code>lambda_item + theta_user * alpha_item + zeta_user * item_obs</code> into the following representation:</p>
@@ -691,11 +691,11 @@ If there is no category information, the model considers all items to be in the 
 <li>Observable terms <span class="arithmatex">\(\zeta_u^\top X^{item}_i\)</span>, where each <span class="arithmatex">\(\zeta_u \in \mathbb{R}^{K_{item}}\)</span> is the user specific coefficients for item observables. This type of component is written as <code>zeta_user * item_obs</code> in the utility formula. For sure, one can use coefficients constant among users by simply putting <code>zeta_constant</code> in the utility formula.</li>
 <li>“Matrix factorization” coefficients of observables written as <code>gamma_user * beta_item * price_obs</code>.  This type of component factorizes the coefficient of observables into user and item latents. For example, suppose there are <span class="arithmatex">\(K_{price}\)</span> price observables (i.e., observables varying by both item and session, price is one of them!), for each of price observable <span class="arithmatex">\(X^{price}_{is}[k] \in \mathbb{R}\)</span>, a pair of latent <span class="arithmatex">\(\gamma_u^k, \beta_i^k \in \mathbb{R}^L\)</span> is trained to construct the coefficient of the <span class="arithmatex">\(k^{th}\)</span> price observable, where <span class="arithmatex">\(L\)</span> is the latent dimension specified by the researcher. In this case, the utility is  <span class="arithmatex">\(\mathcal{U}(u, i, s) = \sum_{k=1}^K (\gamma_u^{k\top} \beta_i^k) X^{price}_{is}[k]\)</span>. One can for sure replace the <code>price_obs</code> with any of <code>{user, item, session}_obs</code>.</li>
 </ol>
-<p>If the researcher wish to treat different part of item observable differently, for example,
-$
+<p>If the researcher wish to treat different part of item observable differently, for example,</p>
+<div class="arithmatex">\[
 \mathcal{U}(u, i, s) = \dots + \zeta_u^\top Y^{item}_i + \omega^\top Z^{item}_i + \dots
-$
-where we partition item observables into two parts <span class="arithmatex">\(X^{item}_i = [Y^{item}_i, Z^{item}_i]\)</span>, and the coefficient for <span class="arithmatex">\(Y^{item}_i\)</span> is user-specific but the coefficient for the second part is constant across all users.
+\]</div>
+<p>where we partition item observables into two parts <span class="arithmatex">\(X^{item}_i = [Y^{item}_i, Z^{item}_i]\)</span>, and the coefficient for <span class="arithmatex">\(Y^{item}_i\)</span> is user-specific but the coefficient for the second part is constant across all users.
 In this case, the researcher should use separate tensors <code>item_obs_part1</code> and <code>item_obs_part2</code> while constructing the <code>ChoiceDataset</code> (both of them needs to start with <code>item_</code>), and use the <code>utility formula</code> with <code>zeta_user * item_obs_part1 + omega_constant * item_obs_part2</code>.</p>
 <p>With the above four cases as building blocks, the researcher can specify all kinds of utility functions.</p>
 <h3 id="number-of-usersitemssessions-num_users-items-sessions">Number of Users/Items/Sessions <code>num_{users, items, sessions}</code></h3>
@@ -707,11 +707,11 @@ However, <code>num_users</code> and <code>num_sessions</code> are required only 
 1. For standalone coefficients like <code>lambda_item</code>, <code>coef_dim_dict['lambda_item']</code> = 1 always.
 2. For matrix factorization coefficients like <code>theta_user</code> and <code>alpha_item</code>, <code>coef_dim_dict['theta_user'] = coef_dim_dict[alpha_item] = L</code>, where <code>L</code> is the desired latent dimension. For the inner product between <span class="arithmatex">\(\alpha_i\)</span> and <span class="arithmatex">\(\theta_u\)</span> to work properly, <code>coef_dim_dict['theta_user'] == coef_dim_dict['alpha_item']</code>.
 3. For terms like <span class="arithmatex">\(\zeta_u^\top X^{item}_i\)</span>, <code>coef_dim_dict['zeta_user']</code> needs to be the dimension of <span class="arithmatex">\(X^{item}_i\)</span>.
-4. For matrix factorization coefficients, the dimension needs to be the latent dimension multiplied by the number of observables. For example, if you have a 3-dimensional feature <span class="arithmatex">\(X = (x_1, x_2, x_3)\)</span>, the utility is <span class="arithmatex">\(\mathcal{U}(u, i, s) = \zeta_{u, i}^\top X\)</span>, and <span class="arithmatex">\(\zeta_{u, i}\)</span> needs to be factorized into two an user-specific and item-specific part (both in <span class="arithmatex">\(\mathbb{R}^L\)</span>) as below
-$$
+4. For matrix factorization coefficients, the dimension needs to be the latent dimension multiplied by the number of observables. For example, if you have a 3-dimensional feature <span class="arithmatex">\(X = (x_1, x_2, x_3)\)</span>, the utility is <span class="arithmatex">\(\mathcal{U}(u, i, s) = \zeta_{u, i}^\top X\)</span>, and <span class="arithmatex">\(\zeta_{u, i}\)</span> needs to be factorized into two an user-specific and item-specific part (both in <span class="arithmatex">\(\mathbb{R}^L\)</span>) as below</p>
+<div class="arithmatex">\[
 \mathcal{U}(u, i, s) = \sum_{k=1}^3 (\gamma_u^{k\top} \beta_i^k) x_k
-$$
-  then <code>coef_dim_dict[gamma_user] = coef_dim_dict[beta_item] = 3 * L</code>.</p>
+\]</div>
+<p>then <code>coef_dim_dict[gamma_user] = coef_dim_dict[beta_item] = 3 * L</code>.</p>
 <p><strong>TODO</strong>: sounds like a lot of work? we are currently developing helper function to infer all these information from the <code>ChoiceDataset</code>, but we will still provide researchers with the full control over the configuration.</p>
 <h3 id="specifying-variance-of-coefficient-prior-distributions-with-prior_variance">Specifying Variance of Coefficient Prior Distributions with <code>prior_variance</code></h3>
 <p>The <code>prior_variance</code> term can be either a scalar or a dictionary with the same keys of <code>coef_dim_dict</code>, which provides the variance of prior distribution for each learnable coefficients.
@@ -731,14 +731,14 @@ In order to leverage obs-to-prior for item-specific coefficients like <code>thet
 <p>In some cases the researcher wishes to provide additional guidance to the model by providing the category of the bought item in teach purchasing record.
 In this case, the probability of purchasing each <span class="arithmatex">\(i\)</span> will be normalized only across other items from the same category rather than all items.
 The <code>category_to_item</code> argument provides a dictionary with category id or name as keys, and <code>category_to_item[C]</code> contains the list of item ids belonging to category <code>C</code>.
-With <code>category_to_item</code> provided, for the probability of purchasing item <span class="arithmatex">\(i\)</span> by user <span class="arithmatex">\(u\)</span> in session, let <span class="arithmatex">\(I_c\)</span> denote the set of items belonging to the same category <span class="arithmatex">\(i\)</span>, the probability of purchasing is
-$$
+With <code>category_to_item</code> provided, for the probability of purchasing item <span class="arithmatex">\(i\)</span> by user <span class="arithmatex">\(u\)</span> in session, let <span class="arithmatex">\(I_c\)</span> denote the set of items belonging to the same category <span class="arithmatex">\(i\)</span>, the probability of purchasing is</p>
+<div class="arithmatex">\[
 P(i|u,s) = \frac{e^{\mathcal{U}(u, i, s)}}{\sum_{i' \in I_c} e^{\mathcal{U}(u, i', s)}}
-$$
-If <code>category_to_item</code> is not provided (or <code>None</code> is provided), the probability of purchasing item <span class="arithmatex">\(i\)</span> by user <span class="arithmatex">\(u\)</span> in session <span class="arithmatex">\(s\)</span> is (note the difference in summation scope, this is computed as if all items are from the same category):
-$$
+\]</div>
+<p>If <code>category_to_item</code> is not provided (or <code>None</code> is provided), the probability of purchasing item <span class="arithmatex">\(i\)</span> by user <span class="arithmatex">\(u\)</span> in session <span class="arithmatex">\(s\)</span> is (note the difference in summation scope, this is computed as if all items are from the same category):</p>
+<div class="arithmatex">\[
 P(i|u,s) = \frac{e^{\mathcal{U}(u, i, s)}}{\sum_{i'=1}^I e^{\mathcal{U}(u, i', s)}}
-$$</p>
+\]</div>
 <h3 id="last-step-create-the-litbembflex-wrapper">Last Step: Create the <code>LitBEMBFlex</code> wrapper</h3>
 <p>The last step is to create the <code>LitBEMBFlex</code> object which contains all information we gathered above. You will also need to provide a <code>learning_rate</code> for the the optimizer and a <code>num_seeds</code> for the Monte-Carlo estimator of gradient in ELBO.
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">model</span> <span class="o">=</span> <span class="n">bemb</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">LitBEMBFlex</span><span class="p">(</span>
