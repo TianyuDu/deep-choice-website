@@ -666,7 +666,7 @@ The model can naturally extend to other use cases which can be formulated into t
 For example, in a job-transition modelling study, we formulated the starting job as the user and ending job as the item and applied the BEMB framework.
 Suppose we have a dataset of purchase records consisting of <span class="arithmatex">\(U\)</span> users, <span class="arithmatex">\(I\)</span> items, and <span class="arithmatex">\(S\)</span> sessions, at it's core (assume no <span class="arithmatex">\(s\)</span>-level effect for now), the BEMB model aims to build user embeddings <span class="arithmatex">\(\theta_u \in \mathbb{R}^{L}\)</span> and item embeddings <span class="arithmatex">\(\alpha_i \in \mathbb{R}^{L}\)</span>, then the model predicts the probability for user <span class="arithmatex">\(u\)</span> to purchase item <span class="arithmatex">\(i\)</span> as
 $$
-P(i|u,s) \propto \theta_u^\top \alpha_i.
+P(i|u,s) = \text{ an increasing function of } \theta_u^\top \alpha_i.
 $$
 Both of <span class="arithmatex">\(\theta_u\)</span> and <span class="arithmatex">\(\alpha_i\)</span> are <em>Bayesian</em>, which means there is a prior distribution and a variational distribution associated with each of them.
 By default, the prior distribution of all entries of <span class="arithmatex">\(\theta_u\)</span> and <span class="arithmatex">\(\alpha_i\)</span> are i.i.d. standard Gaussian distributions.
